@@ -31,6 +31,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
         displayName,
         email,
         createdAt,
+        cartItems: [],
         ...additionalData,
       });
     } catch (error) {

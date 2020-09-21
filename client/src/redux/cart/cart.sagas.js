@@ -23,12 +23,17 @@ export function* getFirebaseCart({ payload: user }) {
   const userRef = yield getUserRef(user.id);
   const userSnapShot = yield userRef.get();
   const userCart = yield userSnapShot.data().cartItems;
-  yield put(setCartFromFirebase(userCart ? userCart : []));
+  const cartItems = yield select(selectCartItems);
+  yield put(setCartFromFirebase(!userCart.length ? cartItems : userCart));
+  if(!userCart.length && cartItems.length) {
+    yield userRef.update({ cartItems });
+  }
 }
 
 export function* updateFirebaseCart() {
   const cartItems = yield select(selectCartItems);
   const currentUser = yield select(selectCurrentUser);
+  if(!currentUser) return;
   const userRef = yield getUserRef(currentUser.id);
   yield userRef.update({ cartItems });
 }
